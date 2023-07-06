@@ -1,0 +1,8 @@
+{
+  "clear_screen": true,
+  "round_to_min": 5,
+  "round_to_min_list": null,
+  "loop_sec": 60,
+  "round_up_min": 2,
+  "round_up_per": null
+}
