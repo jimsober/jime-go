@@ -1,8 +1,8 @@
 {
-  "clear_screen": true,
-  "round_to_min": 5,
-  "round_to_min_list": null,
+  "clear_screen": false,
+  "round_to_min": null,
+  "round_to_min_list": [0,10,15,20,30,40,45,50],
   "loop_sec": 60,
-  "round_up_min": 2,
-  "round_up_per": null
+  "round_up_min": null,
+  "round_up_per": 40
 }
