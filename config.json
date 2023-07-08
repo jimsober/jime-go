@@ -1,5 +1,5 @@
 {
-  "clear_screen": false,
+  "clear_screen": true,
   "round_to_min": null,
   "round_to_min_list": [0,10,15,20,30,40,45,50],
   "loop_sec": 60,
