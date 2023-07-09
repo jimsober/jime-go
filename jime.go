@@ -24,22 +24,39 @@ type Data struct {
 	Round_up_per      float64
 }
 
+var (
+	WarningLog *log.Logger
+	InfoLog    *log.Logger
+	ErrorLog   *log.Logger
+)
+
+func init() {
+	file, err := os.OpenFile("jime.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		ErrorLog.Fatal(err)
+	}
+
+	InfoLog = log.New(file, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+	WarningLog = log.New(file, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
+	ErrorLog = log.New(file, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+}
+
 func validate_config() (bool, time.Duration, time.Duration, []int, time.Duration, float64) {
 	content, err := os.ReadFile("./config.json")
 	if err != nil {
-		log.Fatal("Error when opening file: ", err)
+		ErrorLog.Fatal("Error when opening file: ", err)
 	}
 
 	var payload Data
 	err = json.Unmarshal(content, &payload)
 	if err != nil {
-		log.Fatal("Error during Unmarshal(): ", err)
+		ErrorLog.Fatal("Error during Unmarshal(): ", err)
 	}
 
 	if payload.Round_to_min != 0 && len(payload.Round_to_min_list) != 0 {
-		log.Fatal("Invalid configuration: only one of round_to_min and round_to_min_list allowed", err)
+		ErrorLog.Fatal("Invalid configuration: only one of round_to_min and round_to_min_list allowed", err)
 	} else if payload.Round_to_min == 0 && payload.Round_to_min_list == nil {
-		log.Fatal("Invalid configuration: one of round_to_min or round_to_min list is required", err)
+		ErrorLog.Fatal("Invalid configuration: one of round_to_min or round_to_min list is required", err)
 	} else {
 		if payload.Round_to_min != 0 {
 			using_list = false
@@ -48,9 +65,9 @@ func validate_config() (bool, time.Duration, time.Duration, []int, time.Duration
 		}
 	}
 	if payload.Round_up_min != 0 && payload.Round_up_per != 0 {
-		log.Fatal("Invalid configuration: only one of round_up_min and round_up_per allowed", err)
+		ErrorLog.Fatal("Invalid configuration: only one of round_up_min and round_up_per allowed", err)
 	} else if payload.Round_up_min == 0 && payload.Round_up_per == 0 {
-		log.Fatal("Invalid configuration: one of round_up_min or round_up_per is required", err)
+		ErrorLog.Fatal("Invalid configuration: one of round_up_min or round_up_per is required", err)
 	} else {
 		if payload.Round_up_min != 0 {
 			using_per = false
@@ -96,11 +113,11 @@ func main() {
 
 	for {
 		t = time.Now()
-		log.Println("t is", t.Format("3:04:05 PM"))
+		InfoLog.Println("t is", t.Format("3:04:05 PM"))
 		now_minute = t.Minute()
-		log.Println("now_minute is", now_minute)
+		InfoLog.Println("now_minute is", now_minute)
 		minute_round_up := now_minute + int(round_up_min.Minutes())
-		log.Println("minute_round_up is", minute_round_up)
+		InfoLog.Println("minute_round_up is", minute_round_up)
 		hour_round_up := 0
 		minute_round_up_mod := math.Mod(float64(minute_round_up), float64(round_to_min.Minutes()))
 
@@ -121,6 +138,7 @@ func main() {
 			jime = time.Date(t.Year(), t.Month(), t.Day(), t.Hour()+hour_round_up, minute_round_up-int(minute_round_up_mod), t.Second(), t.Nanosecond(), t.Location())
 		}
 		fmt.Println("The jime is", jime.Format("3:04 PM"))
+		InfoLog.Println("jime is", jime.Format("3:04 PM"))
 
 		var round time.Duration = loop_sec * time.Second
 		next_loop_time := t.Round(round)
