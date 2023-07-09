@@ -5,6 +5,8 @@ Jime is program that rounds the time the way you configure it to. It can be conf
 ### Options
 * Clear Screen
   * choose from true or false
+* Military Display
+  * choose from true or false: true for 24-hour, false for AM/PM
 * Round To options
   * minutes
   * minutes list, for example [0, 15, 30, 45]
@@ -24,6 +26,7 @@ You may use only one non-null Round Up option (`round_up_min` or `round_up_per`)
 # Configuration with no loop
 {
   "clear_screen": true,
+  "military_display": true,
   "round_to_min": 5,
   "round_to_min_list": null,
   "loop_sec": 0,
@@ -35,6 +38,7 @@ You may use only one non-null Round Up option (`round_up_min` or `round_up_per`)
 # Configuration with 60 second loop, round to minutes list combining 10 and 15 minute intervals, and 40% round up percentage
 {
   "clear_screen": true,
+  "military_display": false,
   "round_to_min": null,
   "round_to_min_list": [0,10,15,20,30,40,45,50],
   "loop_sec": 60,

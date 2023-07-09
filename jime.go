@@ -11,24 +11,26 @@ import (
 	"time"
 )
 
-var using_list bool
-var using_per bool
-var jime time.Time
+var (
+	hm_format  string
+	hms_format string
+	using_list bool
+	using_per  bool
+	jime       time.Time
+	WarningLog *log.Logger
+	InfoLog    *log.Logger
+	ErrorLog   *log.Logger
+)
 
 type Data struct {
 	Clear_screen      bool
+	Military_display  bool
 	Round_to_min      time.Duration
 	Round_to_min_list []int
 	Loop_sec          time.Duration
 	Round_up_min      time.Duration
 	Round_up_per      float64
 }
-
-var (
-	WarningLog *log.Logger
-	InfoLog    *log.Logger
-	ErrorLog   *log.Logger
-)
 
 func init() {
 	file, err := os.OpenFile("jime.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
@@ -41,7 +43,7 @@ func init() {
 	ErrorLog = log.New(file, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
-func validate_config() (bool, time.Duration, time.Duration, []int, time.Duration, float64) {
+func validate_config() (bool, bool, time.Duration, time.Duration, []int, time.Duration, float64) {
 	content, err := os.ReadFile("./config.json")
 	if err != nil {
 		ErrorLog.Fatal("Error when opening file: ", err)
@@ -76,18 +78,27 @@ func validate_config() (bool, time.Duration, time.Duration, []int, time.Duration
 		}
 	}
 	clear_screen := payload.Clear_screen
+	military_display := payload.Military_display
 	loop_sec := payload.Loop_sec
 	round_to_min := payload.Round_to_min
 	round_to_min_list := payload.Round_to_min_list
 	round_up_min := payload.Round_up_min
 	round_up_per := payload.Round_up_per
-	return clear_screen, loop_sec, round_to_min, round_to_min_list, round_up_min, round_up_per
+	return clear_screen, military_display, loop_sec, round_to_min, round_to_min_list, round_up_min, round_up_per
 }
 
 func main() {
-	clear_screen, loop_sec, round_to_min, round_to_min_list, round_up_min, round_up_per := validate_config()
+	clear_screen, military_display, loop_sec, round_to_min, round_to_min_list, round_up_min, round_up_per := validate_config()
 	t := time.Now()
 	now_minute := t.Minute()
+
+	if military_display {
+		hm_format = "15:04"
+		hms_format = "15:04:05"
+	} else {
+		hm_format = "3:04 PM"
+		hms_format = "3:04:05 PM"
+	}
 
 	if using_list {
 		var low_rtm int
@@ -113,7 +124,7 @@ func main() {
 
 	for {
 		t = time.Now()
-		InfoLog.Println("t is", t.Format("3:04:05 PM"))
+		InfoLog.Println("t is", t.Format(hms_format))
 		now_minute = t.Minute()
 		InfoLog.Println("now_minute is", now_minute)
 		minute_round_up := now_minute + int(round_up_min.Minutes())
@@ -137,8 +148,8 @@ func main() {
 		} else {
 			jime = time.Date(t.Year(), t.Month(), t.Day(), t.Hour()+hour_round_up, minute_round_up-int(minute_round_up_mod), t.Second(), t.Nanosecond(), t.Location())
 		}
-		fmt.Println("The jime is", jime.Format("3:04 PM"))
-		InfoLog.Println("jime is", jime.Format("3:04 PM"))
+		fmt.Println("The jime is", jime.Format(hm_format))
+		InfoLog.Println("jime is", jime.Format(hm_format))
 
 		var round time.Duration = loop_sec * time.Second
 		next_loop_time := t.Round(round)
