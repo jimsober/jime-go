@@ -1,12 +1,16 @@
 # Jime
 ### Description
-Jime is program that rounds the time the way you configure it to. It can be configured to loop until there is an interrupt signal. Log entries are writtem to the file `jime.log` in the `jime/` directory. Configuration options are defined in the file `config.json` in the `jime/` directory.
+Jime is a program that rounds the time based on configurations you choose.  Configuration options are defined in the file `config.json` in the `jime/` directory.
+
+Jime can be run once or can be configured to loop until an interrupt signal is generated. 
+
+Log entries are writtem to the file `jime.log` in the `jime/` directory.
 
 ### Options
 * Clear Screen
   * choose from true or false
 * Military Display
-  * choose from true or false: true for 24-hour, false for AM/PM
+  * choose from true (24-hour) or false (AM/PM)
 * Round To options
   * minutes
   * minutes list, for example [0, 15, 30, 45]
@@ -17,7 +21,7 @@ Jime is program that rounds the time the way you configure it to. It can be conf
   * percentage of minutes in current interval
 
 ### Configuration Details in config.json
-You may use only one non-null Round To option (`round_to_min` or `round_to_min_list`). The values in round_to_min_list should be sorted from low to high and the highest value is followed by the lowest plus 60 (representing the lowest value of the next hour). 
+You may use only one non-null Round To option (`round_to_min` or `round_to_min_list`). The values in round_to_min_list should be sorted from low to high and the highest value is succeeded by the lowest + 60 (representing the lowest value of the next hour). 
 
 You may use only one non-null Round Up option (`round_up_min` or `round_up_per`).
 
@@ -27,11 +31,11 @@ You may use only one non-null Round Up option (`round_up_min` or `round_up_per`)
 {
   "clear_screen": true,
   "military_display": true,
-  "round_to_min": 5,
-  "round_to_min_list": null,
-  "loop_sec": 0,
-  "round_up_min": 2,
-  "round_up_per": null
+  "round_to_minutes": 5,
+  "round_to_minutes_list": null,
+  "loop_seconds": 0,
+  "round_up_minutes": 2,
+  "round_up_percent": null
 }
 ```
 ```
@@ -39,10 +43,10 @@ You may use only one non-null Round Up option (`round_up_min` or `round_up_per`)
 {
   "clear_screen": true,
   "military_display": false,
-  "round_to_min": null,
-  "round_to_min_list": [0,10,15,20,30,40,45,50],
-  "loop_sec": 60,
-  "round_up_min": null,
-  "round_up_per": 40
+  "round_to_minutes": null,
+  "round_to_minutes_list": [0,10,15,20,30,40,45,50],
+  "loop_seconds": 60,
+  "round_up_minutes": null,
+  "round_up_percent": 40
 }
 ```

@@ -1,9 +1,9 @@
 {
   "clear_screen": true,
   "military_display": false,
-  "round_to_min": null,
-  "round_to_min_list": [0,10,15,20,30,40,45,50],
-  "loop_sec": 60,
-  "round_up_min": null,
-  "round_up_per": 40
+  "round_to_minutes": null,
+  "round_to_minutes_list": [0,10,15,20,30,40,45,50],
+  "loop_seconds": 60,
+  "round_up_minutes": null,
+  "round_up_percent": 40
 }
