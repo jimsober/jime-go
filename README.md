@@ -4,7 +4,7 @@ Jime is a program that rounds the time based on configurations you choose.  Conf
 
 Jime can be run once or can be configured to loop until an interrupt signal is generated. 
 
-Log entries are writtem to the file `jime.log` in the `jime/` directory.
+Log entries are written to the file `jime.log` in the `jime/` directory.
 
 ### Options
 * Clear Screen
