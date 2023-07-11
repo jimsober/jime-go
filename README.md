@@ -21,7 +21,7 @@ Log entries are written to the file `jime.log` in the `jime/` directory.
   * percentage of minutes in current interval
 
 ### Configuration Details in config.json
-You may use only one non-null Round To option (`round_to_minutes` or `round_to_minutes_list`). The values in round_to_minutes_list must be sorted from low to high, for example [0, 10, ...]. The highest value in the list will be succeeded by a value representing the lowest value of the next hour, for example [0, 30] calculates the jime using 0 round_to_minutes, 30 round_to_minutes, and 0 minutes the succeeding hour (and repeating).
+You may use only one non-null Round To option (`round_to_minutes` or `round_to_minutes_list`). The values in round_to_minutes_list must be sorted from low to high, for example [0, 10, ...]. The highest value in the list will be succeeded by a value representing the lowest value of the next hour, for example [0, 30] calculates the jime using 0 round_to_minutes, 30 round_to_minutes, and 0 round_to_minutes the succeeding hour (and repeating).
 
 You may use only one non-null Round Up option (`round_up_minutes` or `round_up_percent`).
 
