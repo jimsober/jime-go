@@ -43,7 +43,7 @@ func init() {
 	ErrorLog = log.New(file, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
-func validate_config() (bool, bool, time.Duration, time.Duration, []int, time.Duration, float64) {
+func validateConfig() (bool, bool, time.Duration, time.Duration, []int, time.Duration, float64) {
 	content, err := os.ReadFile("./config.json")
 	if err != nil {
 		ErrorLog.Fatal("Error when opening file: ", err)
@@ -97,7 +97,7 @@ func validate_config() (bool, bool, time.Duration, time.Duration, []int, time.Du
 	return clear_screen, military_display, loop_seconds, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent
 }
 
-func run_jime(t time.Time, clear_screen bool, round_to_minutes time.Duration, round_to_minutes_list []int, round_up_minutes time.Duration, round_up_percent float64) {
+func calculateAndDisplayJime(t time.Time, clear_screen bool, round_to_minutes time.Duration, round_to_minutes_list []int, round_up_minutes time.Duration, round_up_percent float64) {
 	now_minute := t.Minute()
 	//InfoLog.Println("now_minute is", now_minute)
 
@@ -157,8 +157,15 @@ func run_jime(t time.Time, clear_screen bool, round_to_minutes time.Duration, ro
 }
 
 func main() {
-	clear_screen, military_display, loop_seconds, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent := validate_config()
-	//InfoLog.Println("** configuration: clear_screen is", clear_screen, "; military_display is", military_display, "; loop_seconds is", loop_seconds, "; round_to_minutes is", round_to_minutes, "; round_to_minutes_list is", round_to_minutes_list, "; round_up_minutes is", round_up_minutes, "; round_up_percent is", round_up_percent)
+	clear_screen, military_display, loop_seconds, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent := validateConfig()
+	InfoLog.Println("** config: clear_screen is", clear_screen)
+	InfoLog.Println("** config: military_display is", military_display)
+	//InfoLog.Println("** config: round_to_minutes is", round_to_minutes)
+	//InfoLog.Println("** config: round_to_minutes_list is", round_to_minutes_list)
+	InfoLog.Println("** config: loop_seconds is", loop_seconds*time.Second)
+	//InfoLog.Println("** config: round_up_minutes is", round_up_minutes)
+	//InfoLog.Println("** config: round_up_percent is", round_up_percent)
+
 	if military_display {
 		hm_format = "15:04"
 		hms_format = "15:04:05"
@@ -172,7 +179,7 @@ func main() {
 	t := time.Now()
 	InfoLog.Println("* time is", t.Format(hms_format))
 
-	run_jime(t, clear_screen, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent)
+	calculateAndDisplayJime(t, clear_screen, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent)
 
 	if loop_seconds.Seconds() != 0 {
 		for {
@@ -189,7 +196,7 @@ func main() {
 			t = time.Now()
 			InfoLog.Println("* time is", t.Format(hms_format))
 
-			run_jime(t, clear_screen, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent)
+			calculateAndDisplayJime(t, clear_screen, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent)
 		}
 	}
 }
