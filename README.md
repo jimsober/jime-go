@@ -26,8 +26,8 @@ You may use only one non-null Round To option (`round_to_minutes` or `round_to_m
 You may use only one non-null Round Up option (`round_up_minutes` or `round_up_percent`).
 
 #### Examples:
+##### Configuration with no loop
 ```
-# Configuration with no loop
 {
   "clear_screen": false,
   "military_display": true,
@@ -38,8 +38,8 @@ You may use only one non-null Round Up option (`round_up_minutes` or `round_up_p
   "round_up_percent": null
 }
 ```
+##### Configuration with 60 second loop, round to minutes list combining 10 and 15 minute intervals, and 40% round up percent
 ```
-# Configuration with 60 second loop, round to minutes list combining 10 and 15 minute intervals, and 40% round up percent
 {
   "clear_screen": true,
   "military_display": false,
