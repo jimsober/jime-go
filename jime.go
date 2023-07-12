@@ -137,10 +137,10 @@ func calculateAndDisplayJime(t time.Time, clear_screen bool, round_to_minutes ti
 		round_up_minute = round_up_minute - 60
 		round_up_hour = 1
 	}
-	InfoLog.Println("round_up_hour is", round_up_hour)
-	InfoLog.Println("round_up_minute is", round_up_minute)
+	//InfoLog.Println("round_up_hour is", round_up_hour)
+	//InfoLog.Println("round_up_minute is", round_up_minute)
 	round_up_minute_mod := math.Mod(float64(round_up_minute), float64(round_to_minutes.Minutes()))
-	InfoLog.Println("round_up_minute_mod is", round_up_minute_mod)
+	//InfoLog.Println("round_up_minute_mod is", round_up_minute_mod)
 
 	if clear_screen {
 		cmd := exec.Command("clear") //works on Darwin
