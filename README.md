@@ -6,7 +6,7 @@ Jime can be run once or can be configured to loop until an interrupt signal is g
 
 Log entries are written to the file `jime.log` in the `jime/` directory.
 
-### Options
+### Configuration Options
 * Clear Screen
   * choose from true or false
 * Military Display
@@ -23,7 +23,7 @@ Log entries are written to the file `jime.log` in the `jime/` directory.
 ### Configuration Details in config.json
 You may use only one non-null Round To option (`round_to_minutes` or `round_to_minutes_list`). The values in round_to_minutes_list must be sorted from low to high, for example [0, 10, ...]. The highest value in the list will be succeeded by a value representing the lowest value of the next hour, for example [0, 30] calculates the jime using 0 round_to_minutes, 30 round_to_minutes, and 0 round_to_minutes the succeeding hour (and repeating).
 
-You may use only one non-null Round Up option (`round_up_minutes` or `round_up_percent`).
+You may use only one non-null Round Up option (`round_up_minutes` and `round_up_percent`).
 
 #### Examples:
 ##### Configuration with no loop
@@ -48,5 +48,17 @@ You may use only one non-null Round Up option (`round_up_minutes` or `round_up_p
   "loop_seconds": 60,
   "round_up_minutes": null,
   "round_up_percent": 40
+}
+```
+##### Configuration of a standard minute clock with 0 round to minutes and 0 round up minutes, updated once per minute
+```
+{
+  "clear_screen": true,
+  "military_display": false,
+  "round_to_minutes": 0,
+  "round_to_minutes_list": null,
+  "loop_seconds": 60,
+  "round_up_minutes": 0,
+  "round_up_percent": null
 }
 ```

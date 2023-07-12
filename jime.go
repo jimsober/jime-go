@@ -58,9 +58,9 @@ func validateConfig() (bool, bool, time.Duration, time.Duration, []int, time.Dur
 	//InfoLog.Println("Configuration data unmarshaled successfully")
 
 	if payload.Round_to_minutes != 0 && len(payload.Round_to_minutes_list) != 0 {
-		ErrorLog.Fatal("Invalid configuration: only one of round_to_minutes and round_to_minutes_list allowed", err)
+		ErrorLog.Fatal("Invalid configuration: both of round_to_minutes and round_to_minutes_list not allowed", err)
 	} else if payload.Round_to_minutes == 0 && payload.Round_to_minutes_list == nil {
-		ErrorLog.Fatal("Invalid configuration: one of round_to_minutes or round_to_minutes_list is required", err)
+		using_list = false
 	} else {
 		if payload.Round_to_minutes != 0 {
 			using_list = false
@@ -73,9 +73,9 @@ func validateConfig() (bool, bool, time.Duration, time.Duration, []int, time.Dur
 	//InfoLog.Println("using_list is", using_list)
 
 	if payload.Round_up_minutes != 0 && payload.Round_up_percent != 0 {
-		ErrorLog.Fatal("Invalid configuration: only one of round_up_minutes and round_up_percent allowed", err)
+		ErrorLog.Fatal("Invalid configuration: both of round_up_minutes and round_up_percent not allowed", err)
 	} else if payload.Round_up_minutes == 0 && payload.Round_up_percent == 0 {
-		ErrorLog.Fatal("Invalid configuration: one of round_up_minutes or round_up_percent is required", err)
+		using_percent = false
 	} else {
 		if payload.Round_up_minutes != 0 {
 			using_percent = false
@@ -94,6 +94,7 @@ func validateConfig() (bool, bool, time.Duration, time.Duration, []int, time.Dur
 	round_to_minutes_list := payload.Round_to_minutes_list
 	round_up_minutes := payload.Round_up_minutes
 	round_up_percent := payload.Round_up_percent
+
 	return clear_screen, military_display, loop_seconds, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent
 }
 
@@ -136,10 +137,10 @@ func calculateAndDisplayJime(t time.Time, clear_screen bool, round_to_minutes ti
 		round_up_minute = round_up_minute - 60
 		round_up_hour = 1
 	}
-	//InfoLog.Println("round_up_hour is", round_up_hour)
-	//InfoLog.Println("round_up_minute is", round_up_minute)
+	InfoLog.Println("round_up_hour is", round_up_hour)
+	InfoLog.Println("round_up_minute is", round_up_minute)
 	round_up_minute_mod := math.Mod(float64(round_up_minute), float64(round_to_minutes.Minutes()))
-	//InfoLog.Println("round_up_minute_mod is", round_up_minute_mod)
+	InfoLog.Println("round_up_minute_mod is", round_up_minute_mod)
 
 	if clear_screen {
 		cmd := exec.Command("clear") //works on Darwin
