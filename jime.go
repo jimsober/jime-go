@@ -166,18 +166,18 @@ func calculateAndDisplayJime(t time.Time, clear_screen bool, log_level string, r
 				high_round_to_minute = round_to_minutes_list[0] + 60
 			}
 		}
-		if log_level == "Debug" {
-			DebugLog.Println("low_round_to_minute is", low_round_to_minute)
+		if log_level == "Info" || log_level == "Debug" {
+			InfoLog.Println("* * low_round_to_minute is", low_round_to_minute)
 		}
-		if log_level == "Debug" {
-			DebugLog.Println("high_round_to_minute is", high_round_to_minute)
+		if log_level == "Info" || log_level == "Debug" {
+			InfoLog.Println("* * high_round_to_minute is", high_round_to_minute)
 		}
 		round_to_duration = time.Duration((high_round_to_minute - low_round_to_minute) * 60 * float64(time.Second))
 	} else {
 		round_to_duration = time.Duration(round_to_minutes * 60 * float64(time.Second))
 	}
 	if log_level == "Info" || log_level == "Debug" {
-		InfoLog.Println("round_to_duration is", round_to_duration)
+		InfoLog.Println("* * round_to_duration is", round_to_duration)
 	}
 
 	if using_percent {
@@ -186,7 +186,7 @@ func calculateAndDisplayJime(t time.Time, clear_screen bool, log_level string, r
 		round_up_duration = time.Duration(round_up_minutes * 60 * float64(time.Second))
 	}
 	if log_level == "Info" || log_level == "Debug" {
-		InfoLog.Println("round_up_duration is", round_up_duration)
+		InfoLog.Println("* * round_up_duration is", round_up_duration)
 	}
 
 	round_up_time := t.Add(round_up_duration)
@@ -211,7 +211,7 @@ func calculateAndDisplayJime(t time.Time, clear_screen bool, log_level string, r
 	}
 	fmt.Println("The jime is", jime.Format(hm_format))
 	if log_level == "Info" || log_level == "Debug" {
-		InfoLog.Println("jime is", jime.Format(hm_format))
+		InfoLog.Println("* * jime is", jime.Format(hm_format))
 	}
 }
 
