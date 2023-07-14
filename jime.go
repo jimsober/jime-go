@@ -37,7 +37,7 @@ type Data struct {
 }
 
 func init() {
-	file, err := os.OpenFile("jime.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	file, err := os.OpenFile("log_jime.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		ErrorLog.Fatal(err)
 	}
