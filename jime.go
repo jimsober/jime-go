@@ -59,7 +59,7 @@ func isElementExist(s []string, str string) bool {
 }
 
 func validateConfig(default_log_level string) (bool, bool, string, float64, float64, []float64, float64, float64) {
-	content, err := os.ReadFile("./config.json")
+	content, err := os.ReadFile("./config_jime.json")
 	if err != nil {
 		if default_log_level == "Critical" || default_log_level == "Warning" || default_log_level == "Info" || default_log_level == "Debug" {
 			ErrorLog.Fatal("Error when opening file: ", err)
