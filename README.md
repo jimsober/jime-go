@@ -1,10 +1,10 @@
 # Jime
 ### Description
-Jime is a program that rounds the time based on configurations you choose.  Configuration options are defined in the file `config.json` in the `jime/` directory.
+Jime is a program that rounds the time based on configurations you choose.  Configuration options are defined in the file `config_jime.json` in the `jime/` directory.
 
 Jime can be run once or can be configured to loop until an interrupt signal is generated. 
 
-Log entries are written to the file `jime.log` in the `jime/` directory.
+Log entries are written to the file `log_jime.txt` in the `jime/` directory.
 
 ### Configuration Options
 * Clear Screen
