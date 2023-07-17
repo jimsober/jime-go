@@ -4,10 +4,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"time"
+
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -19,10 +21,6 @@ var (
 	using_list        bool
 	using_percent     bool
 	jime              time.Time
-	DebugLog          *log.Logger
-	InfoLog           *log.Logger
-	WarningLog        *log.Logger
-	ErrorLog          *log.Logger
 )
 
 type Data struct {
@@ -37,15 +35,15 @@ type Data struct {
 }
 
 func init() {
+	zerolog.DurationFieldUnit = time.Second
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel) //set to 'zerolog.Disabled()' to disable logging
+	//zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	file, err := os.OpenFile("log_jime.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
-		ErrorLog.Fatal(err)
+		log.Error().Err(err).Send()
 	}
 
-	DebugLog = log.New(file, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
-	InfoLog = log.New(file, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
-	WarningLog = log.New(file, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
-	ErrorLog = log.New(file, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+	log.Logger = log.Output(file)
 }
 
 func isElementExist(s []string, str string) bool {
@@ -58,42 +56,45 @@ func isElementExist(s []string, str string) bool {
 	return false
 }
 
-func validateConfig(default_log_level string) (bool, bool, string, float64, float64, []float64, float64, float64) {
+func validateConfig() (bool, bool, string, float64, float64, []float64, float64, float64) {
 	content, err := os.ReadFile("./config_jime.json")
 	if err != nil {
-		if default_log_level == "Critical" || default_log_level == "Warning" || default_log_level == "Info" || default_log_level == "Debug" {
-			ErrorLog.Fatal("Error when opening file: ", err)
-		}
+		log.Error().Err(err).Msg("Error when opening file")
 	} else {
-		if default_log_level == "Debug" {
-			DebugLog.Println("Configuration file opened successfully")
-		}
+		log.Debug().Msg("Configuration file opened successfully")
 	}
 
 	var payload Data
 	err = json.Unmarshal(content, &payload)
 	if err != nil {
-		if default_log_level == "Critical" || default_log_level == "Warning" || default_log_level == "Info" || default_log_level == "Debug" {
-			ErrorLog.Fatal("Error during Unmarshal(): ", err)
-		}
+		log.Error().Err(err).Msg("Error during Unmarshal()")
 	} else {
-		if default_log_level == "Debug" {
-			DebugLog.Println("Configuration data unmarshaled successfully")
-		}
+		log.Debug().Msg("Configuration data unmarshaled successfully")
 	}
 
-	log_level_values := []string{"Debug", "Info", "Warning", "Critical"}
+	log_level_values := []string{"panic", "fatal", "error", "warn", "info", "debug", "trace"}
 	if !isElementExist(log_level_values, payload.Log_level) {
-		if default_log_level == "Critical" || default_log_level == "Warning" || default_log_level == "Info" || default_log_level == "Debug" {
-			ErrorLog.Fatal("Invalid configuration: log_level must be one of 'Debug', 'Info', 'Warning', or 'Critical'", err)
-		}
+		log.Error().Err(err).Msg("Invalid configuration: log_level must be one of 'panic', 'fatal', 'error', 'warn', 'info', 'debug', or 'trace'")
 	}
 	log_level := payload.Log_level
+	if log_level == "panic" {
+		zerolog.SetGlobalLevel(zerolog.PanicLevel)
+	} else if log_level == "fatal" {
+		zerolog.SetGlobalLevel(zerolog.FatalLevel)
+	} else if log_level == "error" {
+		zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+	} else if log_level == "warn" {
+		zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	} else if log_level == "info" {
+		zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	} else if log_level == "debug" {
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	} else if log_level == "trace" {
+		zerolog.SetGlobalLevel(zerolog.TraceLevel)
+	}
 
 	if payload.Round_to_minutes != 0 && len(payload.Round_to_minutes_list) != 0 {
-		if log_level == "Critical" || log_level == "Warning" || log_level == "Info" || log_level == "Debug" {
-			ErrorLog.Fatal("Invalid configuration: both of round_to_minutes and round_to_minutes_list not allowed", err)
-		}
+		log.Error().Err(err).Msg("Invalid configuration: both of round_to_minutes and round_to_minutes_list not allowed")
 	} else if payload.Round_to_minutes == 0 && payload.Round_to_minutes_list == nil {
 		using_list = false
 	} else {
@@ -103,20 +104,12 @@ func validateConfig(default_log_level string) (bool, bool, string, float64, floa
 			using_list = true
 		}
 	}
-	if log_level == "Debug" {
-		DebugLog.Println("payload.Round_to_minutes is", payload.Round_to_minutes)
-	}
-	if log_level == "Debug" {
-		DebugLog.Println("payload.Round_to_minutes_list is", payload.Round_to_minutes_list)
-	}
-	if log_level == "Debug" {
-		DebugLog.Println("using_list is", using_list)
-	}
+	log.Debug().Float64("payload.Round_to_minutes", payload.Round_to_minutes).Send()
+	log.Debug().Floats64("payload.Round_to_minutes_list", payload.Round_to_minutes_list).Send()
+	log.Debug().Bool("using_list", using_list).Send()
 
 	if payload.Round_up_minutes != 0 && payload.Round_up_percent != 0 {
-		if log_level == "Critical" || log_level == "Warning" || log_level == "Info" || log_level == "Debug" {
-			ErrorLog.Fatal("Invalid configuration: both of round_up_minutes and round_up_percent not allowed", err)
-		}
+		log.Error().Err(err).Msg("Invalid configuration: both of round_up_minutes and round_up_percent not allowed")
 	} else if payload.Round_up_minutes == 0 && payload.Round_up_percent == 0 {
 		using_percent = false
 	} else {
@@ -126,15 +119,9 @@ func validateConfig(default_log_level string) (bool, bool, string, float64, floa
 			using_percent = true
 		}
 	}
-	if log_level == "Debug" {
-		DebugLog.Println("payload.Round_up_minutes is", payload.Round_up_minutes)
-	}
-	if log_level == "Debug" {
-		DebugLog.Println("payload.Round_up_percent is", payload.Round_up_percent)
-	}
-	if log_level == "Debug" {
-		DebugLog.Println("using_percent is", using_percent)
-	}
+	log.Debug().Float64("payload.Round_up_minutes", payload.Round_up_minutes).Send()
+	log.Debug().Float64("payload.Round_up_percent", payload.Round_up_percent).Send()
+	log.Debug().Bool("using_percent", using_percent).Send()
 
 	clear_screen := payload.Clear_screen
 	military_display := payload.Military_display
@@ -149,9 +136,7 @@ func validateConfig(default_log_level string) (bool, bool, string, float64, floa
 
 func calculateAndDisplayJime(t time.Time, clear_screen bool, log_level string, round_to_minutes float64, round_to_minutes_list []float64, round_up_minutes float64, round_up_percent float64) {
 	now_minute := t.Minute()
-	if log_level == "Debug" {
-		DebugLog.Println("now_minute is", now_minute)
-	}
+	log.Debug().Int("now_minute", now_minute).Send()
 
 	if using_list {
 		var low_round_to_minute float64
@@ -166,37 +151,25 @@ func calculateAndDisplayJime(t time.Time, clear_screen bool, log_level string, r
 				high_round_to_minute = round_to_minutes_list[0] + 60
 			}
 		}
-		if log_level == "Info" || log_level == "Debug" {
-			InfoLog.Println("** low_round_to_minute is", low_round_to_minute)
-		}
-		if log_level == "Info" || log_level == "Debug" {
-			InfoLog.Println("** high_round_to_minute is", high_round_to_minute)
-		}
+		log.Info().Float64("** low_round_to_minute", low_round_to_minute).Send()
+		log.Info().Float64("** high_round_to_minute", high_round_to_minute).Send()
 		round_to_duration = time.Duration((high_round_to_minute - low_round_to_minute) * 60 * float64(time.Second))
 	} else {
 		round_to_duration = time.Duration(round_to_minutes * 60 * float64(time.Second))
 	}
-	if log_level == "Info" || log_level == "Debug" {
-		InfoLog.Println("** round_to_duration is", round_to_duration)
-	}
+	log.Info().Dur("** round_to_duration, seconds", round_to_duration).Send()
 
 	if using_percent {
 		round_up_duration = time.Duration(round_up_percent / 100 * float64(round_to_duration))
 	} else {
 		round_up_duration = time.Duration(round_up_minutes * 60 * float64(time.Second))
 	}
-	if log_level == "Info" || log_level == "Debug" {
-		InfoLog.Println("** round_up_duration is", round_up_duration)
-	}
+	log.Info().Dur("** round_up_duration, seconds", round_up_duration).Send()
 
-	round_up_time := t.Add(round_up_duration)
 	round_down_time := t.Add(-round_up_duration)
-	if log_level == "Debug" {
-		DebugLog.Println("round_up_time is", round_up_time.Round(time.Duration(round_to_duration)).Format(hms_format))
-	}
-	if log_level == "Debug" {
-		DebugLog.Println("round_down_time is", round_down_time.Round(time.Duration(round_to_duration)).Format(hms_format))
-	}
+	round_up_time := t.Add(round_up_duration)
+	log.Debug().Str("round_down_time", round_down_time.Round(time.Duration(round_to_duration)).Format(hms_format)).Send()
+	log.Debug().Str("round_up_time", round_up_time.Round(time.Duration(round_to_duration)).Format(hms_format)).Send()
 
 	if clear_screen {
 		cmd := exec.Command("clear") //works on Darwin
@@ -209,39 +182,20 @@ func calculateAndDisplayJime(t time.Time, clear_screen bool, log_level string, r
 	} else {
 		jime = round_down_time.Round(time.Duration(round_to_duration))
 	}
-	fmt.Println("The jime is", jime.Format(hm_format))
-	if log_level == "Info" || log_level == "Debug" {
-		InfoLog.Println("** jime is", jime.Format(hm_format))
-	}
+	log.Info().Str("** jime", jime.Format(hm_format)).Send()
+	fmt.Println("The jime", jime.Format(hm_format))
 }
 
 func main() {
-	default_log_level := "Critical"
-	clear_screen, military_display, log_level, loop_seconds, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent := validateConfig(default_log_level)
-	if log_level == "Debug" {
-		DebugLog.Println("clear_screen is", clear_screen)
-	}
-	if log_level == "Debug" {
-		DebugLog.Println("military_display is", military_display)
-	}
-	if log_level == "Debug" {
-		DebugLog.Println("log_level is", log_level)
-	}
-	if log_level == "Debug" {
-		DebugLog.Println("round_to_minutes is", round_to_minutes)
-	}
-	if log_level == "Debug" {
-		DebugLog.Println("round_to_minutes_list is", round_to_minutes_list)
-	}
-	if log_level == "Debug" {
-		DebugLog.Println("loop_seconds is", loop_seconds)
-	}
-	if log_level == "Debug" {
-		DebugLog.Println("round_up_minutes is", round_up_minutes)
-	}
-	if log_level == "Debug" {
-		DebugLog.Println("round_up_percent is", round_up_percent)
-	}
+	clear_screen, military_display, log_level, loop_seconds, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent := validateConfig()
+	log.Debug().Bool("clear_screen", clear_screen).Send()
+	log.Debug().Bool("military_display", military_display).Send()
+	log.Debug().Str("log_level", log_level).Send()
+	log.Debug().Float64("round_to_minutes", round_to_minutes).Send()
+	log.Debug().Floats64("round_to_minutes_list", round_to_minutes_list).Send()
+	log.Debug().Float64("loop_seconds", loop_seconds).Send()
+	log.Debug().Float64("round_up_minutes", round_up_minutes).Send()
+	log.Debug().Float64("round_up_percent", round_up_percent).Send()
 
 	if military_display {
 		hm_format = "15:04"
@@ -250,45 +204,31 @@ func main() {
 		hm_format = "3:04 PM"
 		hms_format = "3:04:05 PM"
 	}
-	if log_level == "Debug" {
-		DebugLog.Println("hm_format is", hm_format)
-	}
-	if log_level == "Debug" {
-		DebugLog.Println("hms_format is", hms_format)
-	}
+	log.Debug().Str("hm_format", hm_format).Send()
+	log.Debug().Str("hms_format", hms_format).Send()
 
 	loop_duration = time.Duration(float64(loop_seconds)) * time.Second
-	if log_level == "Debug" {
-		DebugLog.Println("loop_duration is", loop_duration)
-	}
+	log.Debug().Dur("loop_duration, seconds", loop_duration).Send()
 	t := time.Now()
-	if log_level == "Info" || log_level == "Debug" {
-		InfoLog.Println("* time is", t.Format(hms_format))
-	}
+	log.Info().Str("* time", t.Format(hms_format)).Send()
 
 	calculateAndDisplayJime(t, clear_screen, log_level, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent)
 
 	if loop_duration != 0 {
 		for {
 			next_loop_time := t.Round(loop_duration)
-			if log_level == "Debug" {
-				DebugLog.Println("next_loop_time is", next_loop_time)
-			}
+			log.Debug().Time("next_loop_time", next_loop_time).Send()
 			sleep := next_loop_time.Sub(t)
 
 			if sleep < 0 {
 				sleep = next_loop_time.Sub(t) + loop_duration
 			}
-			if log_level == "Debug" {
-				DebugLog.Println("sleep is", sleep)
-			}
+			log.Debug().Dur("sleep, seconds", sleep).Send()
 
 			time.Sleep(sleep)
 
 			t = time.Now()
-			if log_level == "Info" || log_level == "Debug" {
-				InfoLog.Println("* time is", t.Format(hms_format))
-			}
+			log.Info().Str("* time", t.Format(hms_format)).Send()
 
 			calculateAndDisplayJime(t, clear_screen, log_level, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent)
 		}

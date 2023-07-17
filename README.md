@@ -12,7 +12,7 @@ Log entries are written to the file `log_jime.txt` in the `jime/` directory.
 * Military Display
   * choose from true (24-hour) or false (AM/PM)
 * Log Level
-  * choose from Debug, Info, Warning, or Critical
+  * choose from panic, fatal, error, warn, info, debug, or trace
 * Round To options
   * minutes
   * minutes list, for example [0, 15, 30, 45]
@@ -33,7 +33,7 @@ You may use only one non-null Round Up option (`round_up_minutes` or `round_up_p
 {
   "clear_screen": false,
   "military_display": true,
-  "log_level": "Debug",
+  "log_level": "debug",
   "round_to_minutes": 5,
   "round_to_minutes_list": null,
   "loop_seconds": 0,
@@ -46,7 +46,7 @@ You may use only one non-null Round Up option (`round_up_minutes` or `round_up_p
 {
   "clear_screen": true,
   "military_display": false,
-  "log_level": "Info",
+  "log_level": "info",
   "round_to_minutes": null,
   "round_to_minutes_list": [0,10,15,20,30,40,45,50],
   "loop_seconds": 60,
@@ -59,7 +59,7 @@ You may use only one non-null Round Up option (`round_up_minutes` or `round_up_p
 {
   "clear_screen": true,
   "military_display": false,
-  "log_level": "Critical",
+  "log_level": "fatal",
   "round_to_minutes": 0,
   "round_to_minutes_list": null,
   "loop_seconds": 60,
