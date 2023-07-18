@@ -46,7 +46,7 @@ You may use only one non-null Round Up option (`round_up_minutes` or `round_up_p
 {
   "clear_screen": true,
   "military_display": false,
-  "log_level": "info",
+  "log_level": "fatal",
   "round_to_minutes": null,
   "round_to_minutes_list": [0,10,15,20,30,40,45,50],
   "loop_seconds": 60,

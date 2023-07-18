@@ -36,11 +36,11 @@ type Data struct {
 
 func init() {
 	zerolog.DurationFieldUnit = time.Second
-	zerolog.SetGlobalLevel(zerolog.ErrorLevel) //set to 'zerolog.Disabled()' to disable logging
+	zerolog.SetGlobalLevel(zerolog.FatalLevel) //set to 'zerolog.Disabled()' to disable logging
 	//zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	file, err := os.OpenFile("log_jime.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
-		log.Error().Err(err).Send()
+		log.Fatal().Err(err).Send()
 	}
 
 	log.Logger = log.Output(file)
@@ -59,7 +59,7 @@ func isElementExist(s []string, str string) bool {
 func validateConfig() (bool, bool, string, float64, float64, []float64, float64, float64) {
 	content, err := os.ReadFile("./config_jime.json")
 	if err != nil {
-		log.Error().Err(err).Msg("Error when opening file")
+		log.Fatal().Err(err).Msg("Error when opening file")
 	} else {
 		log.Debug().Msg("Configuration file opened successfully")
 	}
@@ -67,14 +67,14 @@ func validateConfig() (bool, bool, string, float64, float64, []float64, float64,
 	var payload Data
 	err = json.Unmarshal(content, &payload)
 	if err != nil {
-		log.Error().Err(err).Msg("Error during Unmarshal()")
+		log.Fatal().Err(err).Msg("Error during Unmarshal()")
 	} else {
 		log.Debug().Msg("Configuration data unmarshaled successfully")
 	}
 
 	log_level_values := []string{"panic", "fatal", "error", "warn", "info", "debug", "trace"}
 	if !isElementExist(log_level_values, payload.Log_level) {
-		log.Error().Err(err).Msg("Invalid configuration: log_level must be one of 'panic', 'fatal', 'error', 'warn', 'info', 'debug', or 'trace'")
+		log.Fatal().Err(err).Msg("Invalid configuration: log_level must be one of 'panic', 'fatal', 'error', 'warn', 'info', 'debug', or 'trace'")
 	}
 	log_level := payload.Log_level
 	if log_level == "panic" {
@@ -94,7 +94,7 @@ func validateConfig() (bool, bool, string, float64, float64, []float64, float64,
 	}
 
 	if payload.Round_to_minutes != 0 && len(payload.Round_to_minutes_list) != 0 {
-		log.Error().Err(err).Msg("Invalid configuration: both of round_to_minutes and round_to_minutes_list not allowed")
+		log.Fatal().Err(err).Msg("Invalid configuration: both of round_to_minutes and round_to_minutes_list not allowed")
 	} else if payload.Round_to_minutes == 0 && payload.Round_to_minutes_list == nil {
 		using_list = false
 	} else {
@@ -109,7 +109,7 @@ func validateConfig() (bool, bool, string, float64, float64, []float64, float64,
 	log.Debug().Bool("using_list", using_list).Send()
 
 	if payload.Round_up_minutes != 0 && payload.Round_up_percent != 0 {
-		log.Error().Err(err).Msg("Invalid configuration: both of round_up_minutes and round_up_percent not allowed")
+		log.Fatal().Err(err).Msg("Invalid configuration: both of round_up_minutes and round_up_percent not allowed")
 	} else if payload.Round_up_minutes == 0 && payload.Round_up_percent == 0 {
 		using_percent = false
 	} else {
@@ -183,7 +183,7 @@ func calculateAndDisplayJime(t time.Time, clear_screen bool, log_level string, r
 		jime = round_down_time.Round(time.Duration(round_to_duration))
 	}
 	log.Info().Str("** jime", jime.Format(hm_format)).Send()
-	fmt.Println("The jime", jime.Format(hm_format))
+	fmt.Println("The jime is", jime.Format(hm_format))
 }
 
 func main() {
