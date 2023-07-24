@@ -168,8 +168,8 @@ func calculateAndDisplayJime(t time.Time, clear_screen bool, log_level string, r
 
 	round_down_time := t.Add(-round_up_duration)
 	round_up_time := t.Add(round_up_duration)
-	log.Debug().Str("round_down_time", round_down_time.Round(time.Duration(round_to_duration)).Format(hms_format)).Send()
-	log.Debug().Str("round_up_time", round_up_time.Round(time.Duration(round_to_duration)).Format(hms_format)).Send()
+	log.Info().Str("** round_down_time", round_down_time.Round(time.Duration(round_to_duration)).Format(hms_format)).Send()
+	log.Info().Str("** round_up_time", round_up_time.Round(time.Duration(round_to_duration)).Format(hms_format)).Send()
 
 	if clear_screen {
 		cmd := exec.Command("clear") //works on Darwin
