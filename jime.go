@@ -210,7 +210,7 @@ func main() {
 	loop_duration = time.Duration(float64(loop_seconds)) * time.Second
 	log.Trace().Dur("loop_duration, seconds", loop_duration).Send()
 	t := time.Now()
-	log.Info().Str("time", t.Format(hms_format)).Send()
+	log.Info().Str("run_time", t.Format(hms_format)).Send()
 
 	calculateAndDisplayJime(t, clear_screen, log_level, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent)
 
@@ -228,7 +228,7 @@ func main() {
 			time.Sleep(sleep)
 
 			t = time.Now()
-			log.Info().Str("time", t.Format(hms_format)).Send()
+			log.Info().Str("run_time", t.Format(hms_format)).Send()
 
 			calculateAndDisplayJime(t, clear_screen, log_level, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent)
 		}
