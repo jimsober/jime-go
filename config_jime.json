@@ -3,8 +3,8 @@
   "military_display": false,
   "log_level": "fatal",
   "round_to_minutes": null,
-  "round_to_minutes_list": [0,10,15,20,30,40,45,50],
-  "loop_seconds": 60,
+  "round_to_minutes_list": [0,10,15,20,25,26,27,28,29,30,40,45,50,55,56,57,58,59],
+  "loop_seconds": 6,
   "round_up_minutes": null,
   "round_up_percent": 40
 }

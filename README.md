@@ -54,6 +54,19 @@ You may use only one non-null Round Up option (`round_up_minutes` or `round_up_p
   "round_up_percent": 40
 }
 ```
+##### Configuration with 6 second loop, round to minutes list combining 10 and 15 minute intervals plus 1 minute intervals at 25-29 and 55-59 minutes, and 40% round up percent
+```
+{
+  "clear_screen": true,
+  "military_display": false,
+  "log_level": "fatal",
+  "round_to_minutes": null,
+  "round_to_minutes_list": [0,10,15,20,25,26,27,28,29,30,40,45,50,55,56,57,58,59],
+  "loop_seconds": 6,
+  "round_up_minutes": null,
+  "round_up_percent": 40
+}
+```
 ##### Configuration of a standard minute clock with 0 round to minutes and 0 round up minutes, updated once per minute
 ```
 {
