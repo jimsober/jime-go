@@ -33,7 +33,7 @@ You may use only one non-null Round Up option (`round_up_minutes` or `round_up_p
 {
   "clear_screen": false,
   "military_display": true,
-  "log_level": "debug",
+  "log_level": "trace",
   "round_to_minutes": 5,
   "round_to_minutes_list": null,
   "loop_seconds": 0,
