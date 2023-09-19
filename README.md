@@ -11,6 +11,8 @@ Log entries are written to the file `log_jime.txt` in the `jime/` directory.
   * choose from true or false
 * Military Display
   * choose from true (24-hour) or false (AM/PM)
+* Time Zone
+  * choose from true or false
 * Log Level
   * choose from panic, fatal, error, warn, info, debug, or trace
 * Round To options
@@ -33,6 +35,7 @@ You may use only one non-null Round Up option (`round_up_minutes` or `round_up_p
 {
   "clear_screen": false,
   "military_display": true,
+  "time_zone": true,
   "log_level": "trace",
   "round_to_minutes": 5,
   "round_to_minutes_list": null,
@@ -46,6 +49,7 @@ You may use only one non-null Round Up option (`round_up_minutes` or `round_up_p
 {
   "clear_screen": true,
   "military_display": false,
+  "time_zone": false,
   "log_level": "fatal",
   "round_to_minutes": null,
   "round_to_minutes_list": [0,10,15,20,30,40,45,50],
@@ -59,6 +63,7 @@ You may use only one non-null Round Up option (`round_up_minutes` or `round_up_p
 {
   "clear_screen": true,
   "military_display": false,
+  "time_zone": false,
   "log_level": "fatal",
   "round_to_minutes": null,
   "round_to_minutes_list": [0,10,15,20,25,26,27,28,29,30,40,45,50,55,56,57,58,59],
@@ -72,6 +77,7 @@ You may use only one non-null Round Up option (`round_up_minutes` or `round_up_p
 {
   "clear_screen": true,
   "military_display": false,
+  "time_zone": false,
   "log_level": "fatal",
   "round_to_minutes": 0,
   "round_to_minutes_list": null,

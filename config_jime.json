@@ -1,6 +1,7 @@
 {
   "clear_screen": true,
   "military_display": false,
+  "time_zone": false,
   "log_level": "fatal",
   "round_to_minutes": null,
   "round_to_minutes_list": [0,10,15,20,25,26,27,28,29,30,40,45,50,55,56,57,58,59],

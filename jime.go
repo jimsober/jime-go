@@ -26,6 +26,7 @@ var (
 type Data struct {
 	Clear_screen          bool
 	Military_display      bool
+	Time_zone             bool
 	Log_level             string
 	Round_to_minutes      float64
 	Round_to_minutes_list []float64
@@ -56,7 +57,7 @@ func isElementExist(s []string, str string) bool {
 	return false
 }
 
-func validateConfig() (bool, bool, string, float64, float64, []float64, float64, float64) {
+func validateConfig() (bool, bool, bool, string, float64, float64, []float64, float64, float64) {
 	content, err := os.ReadFile("./config_jime.json")
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error when opening file")
@@ -125,13 +126,14 @@ func validateConfig() (bool, bool, string, float64, float64, []float64, float64,
 
 	clear_screen := payload.Clear_screen
 	military_display := payload.Military_display
+	time_zone := payload.Time_zone
 	loop_seconds := payload.Loop_seconds
 	round_to_minutes := payload.Round_to_minutes
 	round_to_minutes_list := payload.Round_to_minutes_list
 	round_up_minutes := payload.Round_up_minutes
 	round_up_percent := payload.Round_up_percent
 
-	return clear_screen, military_display, log_level, loop_seconds, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent
+	return clear_screen, military_display, time_zone, log_level, loop_seconds, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent
 }
 
 func calculateAndDisplayJime(t time.Time, clear_screen bool, log_level string, round_to_minutes float64, round_to_minutes_list []float64, round_up_minutes float64, round_up_percent float64) {
@@ -187,9 +189,10 @@ func calculateAndDisplayJime(t time.Time, clear_screen bool, log_level string, r
 }
 
 func main() {
-	clear_screen, military_display, log_level, loop_seconds, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent := validateConfig()
+	clear_screen, military_display, time_zone, log_level, loop_seconds, round_to_minutes, round_to_minutes_list, round_up_minutes, round_up_percent := validateConfig()
 	log.Trace().Bool("clear_screen", clear_screen).Send()
 	log.Trace().Bool("military_display", military_display).Send()
+	log.Trace().Bool("time_zone", time_zone).Send()
 	log.Trace().Str("log_level", log_level).Send()
 	log.Trace().Float64("round_to_minutes", round_to_minutes).Send()
 	log.Trace().Floats64("round_to_minutes_list", round_to_minutes_list).Send()
@@ -198,11 +201,21 @@ func main() {
 	log.Trace().Float64("round_up_percent", round_up_percent).Send()
 
 	if military_display {
-		hm_format = "15:04 MST"
-		hms_format = "15:04:05 MST"
+		if time_zone {
+			hm_format = "15:04 MST"
+			hms_format = "15:04:05 MST"
+		} else {
+			hm_format = "15:04"
+			hms_format = "15:04:05"
+		}
 	} else {
-		hm_format = "3:04 PM MST"
-		hms_format = "3:04:05 PM MST"
+		if time_zone {
+			hm_format = "3:04 PM MST"
+			hms_format = "3:04:05 PM MST"
+		} else {
+			hm_format = "3:04 PM"
+			hms_format = "3:04:05 PM"
+		}
 	}
 	log.Trace().Str("hm_format", hm_format).Send()
 	log.Trace().Str("hms_format", hms_format).Send()
