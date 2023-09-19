@@ -198,11 +198,11 @@ func main() {
 	log.Trace().Float64("round_up_percent", round_up_percent).Send()
 
 	if military_display {
-		hm_format = "15:04"
-		hms_format = "15:04:05"
+		hm_format = "15:04 MST"
+		hms_format = "15:04:05 MST"
 	} else {
-		hm_format = "3:04 PM"
-		hms_format = "3:04:05 PM"
+		hm_format = "3:04 PM MST"
+		hms_format = "3:04:05 PM MST"
 	}
 	log.Trace().Str("hm_format", hm_format).Send()
 	log.Trace().Str("hms_format", hms_format).Send()
