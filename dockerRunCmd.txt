@@ -1,1 +1,1 @@
-docker run --rm jime
+docker run --rm jimsober/jime
