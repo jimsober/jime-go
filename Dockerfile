@@ -9,7 +9,7 @@ WORKDIR /usr/src/jime
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 
-COPY . .
+COPY jime.go config_jime.json log_jime.txt README.md .
 RUN go build -v -o /usr/local/bin/jime ./...
 
 CMD ["jime"]
